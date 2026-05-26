@@ -1,0 +1,72 @@
+# Autoformalizer ablation: Goedel-Prover-V2-32B in the autoformalizer role.
+# Identical to main.yaml except the autoformalizer model.
+
+name: goedel32b
+
+dataset:
+  name: math500
+  max_examples: 500
+  split_seed: 0
+  split_fractions: {dev: 0.20, cal: 0.40, test: 0.40}
+
+generation:
+  backend: vllm
+  model_id: Qwen/Qwen2.5-Math-7B-Instruct
+  dtype: auto
+  quantization: null
+  max_model_len: 4096
+  tensor_parallel_size: 1
+  gpu_memory_utilization: 0.05   # generation is replayed from cache; see header note
+  max_num_seqs: 8
+  chat_template: false
+  n_samples: 32
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 2048
+  seed: 0
+
+formalization:
+  formalize_top_k_classes: 4
+  artifacts_per_class: 4
+  use_templates: false
+  use_autoformalizer: true
+  autoformalizer:
+    backend: vllm
+    model_id: Goedel-LM/Goedel-Prover-V2-32B
+    dtype: auto
+    quantization: null
+    max_model_len: 4096
+    tensor_parallel_size: 1
+    gpu_memory_utilization: 0.85
+    max_num_seqs: 8
+    chat_template: true
+    temperature: 0.2
+    repair_temperature: 0.7
+    max_new_tokens: 2048
+
+lean:
+  backend: subprocess
+  project_dir: lean
+  timeout_seconds: 20
+  tactics:
+    - norm_num
+    - "ring_nf; norm_num"
+    - "ring_nf; ring"
+    - decide
+    - omega
+    - linarith
+    - nlinarith
+    - "simp; norm_num"
+    - "simp_all; norm_num"
+    - aesop
+
+calibration:
+  epsilon: 0.15
+  delta: 0.05
+  threshold_grid:
+    typ: [0.0, 0.25, 0.5, 0.75, 0.9]
+    prf: [0.0, 0.1, 0.25, 0.5, 0.75]
+    margin: [-0.5, 0.0, 0.1, 0.25, 0.5]
+
+output:
+  run_dir: runs/goedel32b

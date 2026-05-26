@@ -1,0 +1,52 @@
+# Tiny config for local iteration: a fast end-to-end wiring smoke test that needs no GPU.
+# It uses the built-in template formalizer and the mock Lean backend to test the
+# full pipeline (candidates -> diagnostics -> calibration -> evaluation) without a GPU or the
+# real autoformalizer. Generation runs on CPU via a small public GGUF (~1 GB, downloaded once).
+# The paper experiments (main.yaml, goedel8b.yaml, goedel32b.yaml, amc.yaml) use vLLM + the
+# full 7B models with use_templates: false.
+name: dev
+
+dataset:
+  name: math500
+  subset: short_answer
+  max_examples: 8
+  split_seed: 0
+  split_fractions:
+    dev: 0.5
+    cal: 0.25
+    test: 0.25
+
+generation:
+  backend: llama_cpp
+  model_id: Qwen/Qwen2.5-1.5B-Instruct-GGUF
+  model_file: qwen2.5-1.5b-instruct-q4_k_m.gguf
+  n_samples: 4
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 512
+  seed: 0
+
+formalization:
+  formalize_top_k_classes: 2
+  artifacts_per_class: 1
+  use_templates: true
+  use_autoformalizer: false  # off for dev to keep it fast
+
+lean:
+  backend: mock                    # 'mock' or 'subprocess'
+  timeout_seconds: 5
+  tactics:
+    - norm_num
+    - decide
+    - "ring_nf; norm_num"
+
+calibration:
+  epsilon: 0.10
+  delta: 0.05
+  threshold_grid:
+    typ: [0.0, 0.5, 0.9]
+    prf: [0.0, 0.25, 0.5]
+    margin: [-0.5, 0.0, 0.25]
+
+output:
+  run_dir: runs/dev

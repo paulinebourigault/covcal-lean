@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+.uv/
+dist/
+build/
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Project artifacts
+runs/
+cache/
+models/
+data/raw/
+data/processed/
+*.jsonl.gz
+
+# Paper sources and working notes (kept local; the published paper links here, not vice versa)
+docs/
+SETUP.md
+sbatch_logs/
+analysis_*/
+*.bak
+*.bak.*
+*.bak_*
+*.orig
+
+# --- Local-only experiment files ---
+
+# Configs: the dev + paper-experiment configs are public
+/configs/*.yaml
+!/configs/dev.yaml
+!/configs/main.yaml
+!/configs/goedel8b.yaml
+!/configs/goedel32b.yaml
+!/configs/amc.yaml
+
+# Scripts: cluster batch (SLURM) scripts local.
+/scripts/*.bash
+/scripts/setup_server.sh
+/scripts/README_sbatch.md
+/scripts/render_budget_table.py
+/scripts/analysis/build_manual_audit.py
+/scripts/analysis/build_faithfulness_audit.py
+/scripts/analysis/plot_selective_risk.py
+/scripts/analysis/reproduce_tables.sh
+/tests/integration/test_render_budget_table.py
+
+# Lean
+lean/.lake/
+lean/lake-packages/
+lean/build/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# local config
+.env
+.env.local
+configs/local.yaml

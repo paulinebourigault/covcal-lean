@@ -1,0 +1,73 @@
+# Main MATH-500 run: Qwen2.5-Math-7B generator + Qwen2.5-Coder-7B autoformalizer.
+# 500 problems are loaded; ~378 remain after filtering non-normalizable / proof-only items.
+# Split 20/40/40 (dev/cal/test), K=32 candidates, top-4 answer classes, 4 artifacts/class,
+# 20s Lean budget. Target selective risk epsilon=0.15, delta=0.05.
+name: main
+
+dataset:
+  name: math500
+  max_examples: 500
+  split_seed: 0
+  split_fractions: {dev: 0.20, cal: 0.40, test: 0.40}
+
+generation:
+  backend: vllm
+  model_id: Qwen/Qwen2.5-Math-7B-Instruct
+  dtype: auto
+  quantization: null
+  max_model_len: 4096
+  tensor_parallel_size: 1
+  gpu_memory_utilization: 0.45
+  max_num_seqs: 8
+  chat_template: false
+  n_samples: 32
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 2048
+  seed: 0
+
+formalization:
+  formalize_top_k_classes: 4
+  artifacts_per_class: 4
+  use_templates: false
+  use_autoformalizer: true
+  autoformalizer:
+    backend: vllm
+    model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+    dtype: auto
+    quantization: null
+    max_model_len: 8192
+    tensor_parallel_size: 1
+    gpu_memory_utilization: 0.45
+    max_num_seqs: 8
+    chat_template: false
+    temperature: 0.2
+    repair_temperature: 0.7
+    max_new_tokens: 2048
+
+lean:
+  backend: subprocess
+  project_dir: lean
+  timeout_seconds: 20
+  tactics:
+    - norm_num
+    - "ring_nf; norm_num"
+    - "ring_nf; ring"
+    - decide
+    - omega
+    - linarith
+    - nlinarith
+    - "simp; norm_num"
+    - "simp_all; norm_num"
+    - aesop
+
+calibration:
+  epsilon: 0.15
+  delta: 0.05
+  threshold_grid:
+    typ: [0.0, 0.25, 0.5, 0.75, 0.9]
+    prf: [0.0, 0.1, 0.25, 0.5, 0.75]
+    margin: [-0.5, 0.0, 0.1, 0.25, 0.5]
+
+output:
+  run_dir: runs/main

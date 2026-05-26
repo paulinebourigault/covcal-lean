@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: tests (mock pipeline, no GPU/LLM/Lean)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install (dev dependencies only)
+        run: uv sync --extra dev
+      - name: Unit + integration tests
+        run: uv run --no-sync pytest tests/unit tests/integration -q
