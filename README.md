@@ -1,7 +1,12 @@
 # CovCal: Risk-Controlled Lean-as-Judge
 
+[![arXiv](https://img.shields.io/badge/arXiv-2605.28365-b31b1b.svg)](https://arxiv.org/abs/2605.28365v1)
+[![Website](https://img.shields.io/badge/Project-Website-blue.svg)](https://haithamb.github.io/covcal/)
+
 Code and experiments for *Risk-Controlled Lean-as-Judge for Natural-Language Mathematical
 Reasoning*.
+
+![CovCal overview](docs/overview.png)
 
 CovCal is a **selective wrapper** around a Lean-based answer selector for natural-language
 math problems. It does not train a theorem prover. For each problem it samples candidate
@@ -105,4 +110,17 @@ classifier (`proof_faithfulness.py`), and the headline-number summary (`paper_nu
 make test        # fast unit tests (no Lean, no LLM)
 make test-all    # unit + integration (mock-based pipeline smoke tests)
 make lint        # ruff
+```
+
+## Citation
+
+```bibtex
+@unpublished{bourigault2026covcal,
+  title   = {{CovCal}: Risk-Controlled Lean-as-Judge for Natural-Language Mathematical Reasoning},
+  author  = {Bourigault, Pauline and Ji, Xiaotong and Zimmer, Matthieu and Tutunov, Rasul and Bou-Ammar, Haitham},
+  year    = {2026},
+  eprint  = {2605.28365},
+  archivePrefix = {arXiv},
+  url     = {https://arxiv.org/abs/2605.28365v1}
+}
 ```
