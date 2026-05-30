@@ -6,7 +6,7 @@
 Code and experiments for *Risk-Controlled Lean-as-Judge for Natural-Language Mathematical
 Reasoning*.
 
-![CovCal overview](docs/overview.png)
+![CovCal overview](assets/overview.png)
 
 CovCal is a **selective wrapper** around a Lean-based answer selector for natural-language
 math problems. It does not train a theorem prover. For each problem it samples candidate
